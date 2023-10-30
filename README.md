@@ -69,8 +69,10 @@ AND prénom="Bruce";
 ## Exercice 8 - Nom des acteurs de 'Sueurs froides'
 
 ```sql
-
-
+SELECT nom, prénom
+FROM artiste
+JOIN film ON artiste.idArtiste = film.idRéalisateur
+WHERE film.titre = 'Sueurs froides';
 
 ```
 ## Exercice 9 - Quelles sont les films notés par l'internaute Prénom 0 Nom0
@@ -86,23 +88,42 @@ AND i.prénom="Prénom0";
 ## Exercice 10 - Films dont le réalisateur est Tim Burton, et l’un des acteurs Johnny Depp
 
 ```sql
+SELECT titre
+FROM role
+JOIN artiste ON role.idActeur = artiste.idArtiste
+JOIN film ON film.idFilm = role.idFilm
+WHERE artiste.nom = 'Depp'
+AND artiste.prénom = 'Johnny'
+AND film.titre IN (
+    SELECT titre
+    FROM film
+    JOIN artiste ON film.idRéalisateur = artiste.idArtiste
+    WHERE artiste.nom = 'Burton'
+    AND artiste.prénom = 'Tim'
+);
 
 ```
 ## Exercice 11 - Titre des films dans lesquels a joué ́Woody Allen. Donner aussi le rôle.
 
 ```sql
-SELECT 
-FROM 
-WHERE 
+SELECT titre, nomRôle
+FROM film
+JOIN role ON film.idFilm = role.idFilm
+JOIN artiste ON artiste.idArtiste = role.idActeur
+WHERE artiste.nom = 'Allen'
+AND artiste.prénom = 'Woody';
+
 ```
 ## Exercice 12 - Quel metteur en scène a tourné dans ses propres films ? Donner le nom, le rôle et le titre des films.
 
 ```sql
-SELECT nom ,nomRôle , titre
-FROM 
-WHERE 
+SELECT titre, nom, prénom, nomRôle
+FROM film
+JOIN artiste ON film.idRéalisateur = artiste.idArtiste
+JOIN role ON film.idFilm = role.idFilm AND film.idRéalisateur = role.idActeur;
+
 ```
-## Exercice 13 - 
+## Exercice 13 - Titre des films de Quentin Tarantino dans lesquels il n’a pas joué
 
 ```sql
 SELECT 
@@ -123,14 +144,14 @@ WHERE idArtiste = f.idRéalisateur;
 ## Exercice 15 - Donnez les films de Hitchcock sans James Stewart 
 
 ```sql
-SELECT 
-FROM 
-WHERE 
+SELECT titre
+FROM  film
+WHERE  
 ```
 ## Exercice 16 - Dans quels films le réalisateur a-t-il le même prénom que l’un des interprètes ? (titre, nom du réalisateur, nom de l’interprète). Le réalisateur et l’interprète ne doivent pas être la même personne.
 
 ```sql
-SELECT 
+SELECT titre , nom , nom 
 FROM 
 WHERE 
 ```
