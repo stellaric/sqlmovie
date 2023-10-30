@@ -1,3 +1,8 @@
+DROP database if exists movie;
+CREATE database if not exists movie;
+use movie ;
+        
+
 -- phpMyAdmin SQL Dump
 -- version 4.7.5
 -- https://www.phpmyadmin.net/
