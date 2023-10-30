@@ -54,8 +54,7 @@ Inner Join artiste as a on r.idActeur= a .idArtiste
 WHERE nomRôle="Chewbacca";
 ```
 
-## Exercice 7 - Dans quels films Bruce Willis a-t-il joué le rôle de John McClane
-?
+## Exercice 7 - Dans quels films Bruce Willis a-t-il joué le rôle de John McClane ?
 
 ```sql
 SELECT titre , nomRôle , nom , prénom
@@ -117,18 +116,33 @@ AND artiste.prénom = 'Woody';
 ## Exercice 12 - Quel metteur en scène a tourné dans ses propres films ? Donner le nom, le rôle et le titre des films.
 
 ```sql
-SELECT titre, nom, prénom, nomRôle
-FROM film
-JOIN artiste ON film.idRéalisateur = artiste.idArtiste
-JOIN role ON film.idFilm = role.idFilm AND film.idRéalisateur = role.idActeur;
+SELECT a.nom, a.prénom, r.nomRôle, f.titre
+FROM artiste a
+JOIN role r ON a.idArtiste = r.idActeur
+JOIN film f ON r.idFilm = f.idFilm AND f.idRéalisateur = a.idArtiste
+WHERE f.idRéalisateur = a.idArtiste;
 
 ```
 ## Exercice 13 - Titre des films de Quentin Tarantino dans lesquels il n’a pas joué
 
 ```sql
-SELECT 
-FROM 
-WHERE 
+SELECT titre
+FROM film
+WHERE idRéalisateur = (
+    SELECT idArtiste
+    FROM artiste
+    WHERE nom = 'Tarantino' AND prénom = 'Quentin'
+)
+AND idFilm NOT IN (
+    SELECT idFilm
+    FROM role
+    WHERE idActeur = (
+        SELECT idArtiste
+        FROM artiste
+        WHERE nom = 'Tarantino' AND prénom = 'Quentin'
+    )
+);
+
 ```
 ## Exercice 14 - Quel metteur en scène a tourné ́en tant qu’acteur ? Donner le  nom, le rôle et le titre des films dans lesquels cet artiste a joué.
  
@@ -144,16 +158,23 @@ WHERE idArtiste = f.idRéalisateur;
 ## Exercice 15 - Donnez les films de Hitchcock sans James Stewart 
 
 ```sql
-SELECT titre
-FROM  film
-WHERE  
+SELECT f.titre 
+FROM film f
+JOIN artiste a1 ON f.idRéalisateur = a1.idArtiste AND a1.nom = 'Hitchcock'
+LEFT JOIN role r ON f.idFilm = r.idFilm
+LEFT JOIN artiste a2 ON r.idActeur = a2.idArtiste AND a2.nom = 'Stewart' AND a2.prénom = 'James'
+WHERE a2.nom IS NULL;
+
 ```
 ## Exercice 16 - Dans quels films le réalisateur a-t-il le même prénom que l’un des interprètes ? (titre, nom du réalisateur, nom de l’interprète). Le réalisateur et l’interprète ne doivent pas être la même personne.
 
 ```sql
-SELECT titre , nom , nom 
-FROM 
-WHERE 
+SELECT f.titre, r1.nom AS nomRéalisateur, r2.nom AS nomInterprète
+FROM film f
+JOIN artiste r1 ON f.idRéalisateur = r1.idArtiste
+JOIN role ro ON f.idFilm = ro.idFilm AND r1.prénom = r2.prénom
+JOIN artiste r2 ON ro.idActeur = r2.idArtiste AND r1.idArtiste != r2.idArtiste;
+
 ```
 ## Exercice 17 - Les films sans rôle
 
@@ -168,9 +189,13 @@ WHERE role.idActeur IS NULL;
 ## Exercice 18 - Quelles sont les films non notés par l'internaute Prénom1 Nom1
 
 ```sql
-SELECT 
-FROM 
-WHERE 
+SELECT f.titre
+FROM film f
+LEFT JOIN notation n ON f.idFilm = n.idFilm
+LEFT JOIN internaute i ON n.idInternaute = i.idInternaute
+WHERE i.prénom = 'Prénom1' AND i.nom = 'Nom1'
+   OR n.idFilm IS NULL;
+
 ```
 ## Exercice 19 - Quels acteurs n’ont jamais réalisé de film ?
 
